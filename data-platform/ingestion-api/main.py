@@ -1,13 +1,16 @@
-from fastapi import FastAPI
+"""
+main.py - Re-export app from ingestion_api.main
+"""
+from pathlib import Path
+import sys
 
-app = FastAPI(title="Situational Awareness Data Platform")
+pkg_dir = Path(__file__).resolve().parent.parent / "ingestion_api"
+if str(pkg_dir) not in sys.path:
+    sys.path.insert(0, str(pkg_dir))
 
+from main import app  # noqa: F401
 
-@app.get("/")
-def root():
-    return {"status": "Data platform is running"}
+if __name__ == "__main__":
+    import uvicorn
 
-
-@app.get("/health")
-def health():
-    return {"status": "healthy"}
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
